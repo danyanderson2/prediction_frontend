@@ -55,46 +55,157 @@ interface CategoricalOptions {
   store_size: string[];
 }
 
+// Fallback categorical options
+const FALLBACK_OPTIONS: CategoricalOptions = {
+  family: [
+    'PATES_RIZ_FECULENTS',
+    'BOISSONS',
+    'PRODUITS_LAITIERS',
+    'VIANDES_POISSONS',
+    'FRUITS_LEGUMES',
+    'EPICERIE_SALEE',
+    'EPICERIE_SUCREE',
+    'SURGELES',
+    'PRODUITS_DENTRETIEN',
+    'HYGIENE_BEAUTE'
+  ],
+  sub_family: [
+    'PATES',
+    'RIZ',
+    'EAUX',
+    'SODAS',
+    'JUS',
+    'YAOURTS',
+    'FROMAGES',
+    'LAIT',
+    'BOEUF',
+    'POULET',
+    'POISSON',
+    'POMMES',
+    'TOMATES',
+    'CONSERVES',
+    'SAUCES',
+    'BISCUITS',
+    'CHOCOLAT',
+    'LEGUMES_SURGELES',
+    'PIZZAS',
+    'LESSIVES',
+    'NETTOYANTS',
+    'SHAMPOINGS',
+    'DENTIFRICES'
+  ],
+  brand: [
+    'BARILLA',
+    'PANZANI',
+    'LUSTUCRU',
+    'UNCLE_BENS',
+    'TAUREAU_AILE',
+    'EVIAN',
+    'VOLVIC',
+    'COCA_COLA',
+    'PEPSI',
+    'ORANGINA',
+    'TROPICANA',
+    'DANONE',
+    'YOPLAIT',
+    'PRESIDENT',
+    'KIRI',
+    'BABYBEL',
+    'CHARAL',
+    'HERTA',
+    'FLEURY_MICHON',
+    'FINDUS',
+    'MARIE',
+    'BJORG',
+    'NESTLE',
+    'FERRERO',
+    'LU',
+    'MILKA',
+    'HARIBO',
+    'BONDUELLE',
+    'CASSEGRAIN',
+    'MAGGI',
+    'KNORR',
+    'PICARD',
+    'BUITONI',
+    'ARIEL',
+    'SKIP',
+    'OMO',
+    'MR_PROPRE',
+    'CIF',
+    'LOREAL',
+    'GARNIER',
+    'NIVEA',
+    'COLGATE',
+    'SIGNAL'
+  ],
+  customer_need: [
+    'REPAS_RAPIDE',
+    'CUISINE_MAISON',
+    'GOUTER',
+    'PETIT_DEJEUNER',
+    'APERITIF',
+    'DESSERT',
+    'ACCOMPAGNEMENT',
+    'PLAT_PRINCIPAL',
+    'HYGIENE_QUOTIDIENNE',
+    'ENTRETIEN_MAISON',
+    'SANTE_BIEN_ETRE'
+  ],
+  region: [
+    'ILE_DE_FRANCE',
+    'AUVERGNE_RHONE_ALPES',
+    'PROVENCE_ALPES_COTE_AZUR',
+    'NOUVELLE_AQUITAINE',
+    'OCCITANIE',
+    'HAUTS_DE_FRANCE',
+    'GRAND_EST',
+    'PAYS_DE_LA_LOIRE',
+    'BRETAGNE',
+    'NORMANDIE',
+    'BOURGOGNE_FRANCHE_COMTE',
+    'CENTRE_VAL_DE_LOIRE',
+    'CORSE'
+  ],
+  store_size: ['S', 'M', 'L', 'XL']
+};
+
 export default function PredictionForm() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<PredictionResponse | null>(null);
-  const [categoricalOptions, setCategoricalOptions] = useState<CategoricalOptions | null>(null);
+  const [categoricalOptions, setCategoricalOptions] = useState<CategoricalOptions>(FALLBACK_OPTIONS);
   const [formData, setFormData] = useState<FormData>({
-    family: '',
-    sub_family: '',
-    brand: '',
-    customer_need: '',
-    customer_need_importance: 2,
-    brand_importance: 2,
+    family: 'PATES_RIZ_FECULENTS',
+    sub_family: 'PATES',
+    brand: 'BARILLA',
+    customer_need: 'REPAS_RAPIDE',
+    customer_need_importance: 7.5,
+    brand_importance: 8.2,
     price_per_pack: 3.99,
     pack_size_g: 500,
-    base_demand_N1_per_store: 12.5,
-    region: '',
+    base_demand_N1_per_store: 15.3,
+    region: 'ILE_DE_FRANCE',
     store_size: 'L',
     surface_m2: 2500,
     store_size_factor: 1.25,
-    assortment_coverage: 0.78,
-    cold_start: true,
+    assortment_coverage: 0.82,
+    cold_start: false,
   });
 
   useEffect(() => {
+    console.log('PredictionForm mounted');
+    console.log('Categorical options:', categoricalOptions);
+    console.log('Family options count:', categoricalOptions.family.length);
+    
     const fetchCategoricalOptions = async () => {
       try {
         const response = await axios.get(`${API_URL}/categorical-options`);
         setCategoricalOptions(response.data);
-        if (response.data) {
-          setFormData(prev => ({
-            ...prev,
-            family: response.data.family[0] || '',
-            sub_family: response.data.sub_family[0] || '',
-            brand: response.data.brand[0] || '',
-            customer_need: response.data.customer_need[0] || '',
-            region: response.data.region[0] || ''
-          }));
-        }
+        console.log('Loaded categorical options from API:', response.data);
       } catch (error) {
         console.error('Failed to fetch categorical options:', error);
-        toast.error('Failed to load form options');
+        console.log('Using fallback categorical options');
+        // Keep using fallback options
       }
     };
 
@@ -151,214 +262,265 @@ export default function PredictionForm() {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Product Characteristics */}
-          <div className="space-y-5 bg-gradient-to-br from-blue-50 to-white p-6 rounded-2xl border-3 border-blue-200 shadow-material-4">
-            <h3 className="text-lg font-black text-gray-900 flex items-center space-x-3 pb-3 border-b-4 border-blue-600">
-              <span className="w-9 h-9 bg-gradient-to-br from-blue-600 to-blue-800 text-white rounded-xl text-base flex items-center justify-center font-black shadow-material-4">
-                1
-              </span>
-              <span className="uppercase tracking-wide">Product Characteristics</span>
-            </h3>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="material-input-wrapper">
-                <label className="material-label">
-                  Product Family
-                </label>
-                <select
-                  name="family"
-                  value={formData.family}
-                  onChange={handleInputChange}
-                  className="material-select"
-                  required
-                >
-                  <option value="">Select family...</option>
-                  {categoricalOptions?.family.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
+          <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm" style={{ position: 'relative', overflow: 'visible' }}>
+            <div className="flex items-center space-x-3 mb-6 pb-3 border-b border-gray-200">
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <span className="text-white text-sm font-bold">1</span>
               </div>
-
-              <div className="material-input-wrapper">
-                <label className="material-label">
-                  Sub-Family
-                </label>
-                <select
-                  name="sub_family"
-                  value={formData.sub_family}
-                  onChange={handleInputChange}
-                  className="material-select"
-                  required
-                >
-                  <option value="">Select sub-family...</option>
-                  {categoricalOptions?.sub_family.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="material-input-wrapper">
-                <label className="material-label">
-                  Brand
-                </label>
-                <select
-                  name="brand"
-                  value={formData.brand}
-                  onChange={handleInputChange}
-                  className="material-select"
-                  required
-                >
-                  <option value="">Select brand...</option>
-                  {categoricalOptions?.brand.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="material-input-wrapper">
-                <label className="material-label">
-                  Customer Need
-                </label>
-                <select
-                  name="customer_need"
-                  value={formData.customer_need}
-                  onChange={handleInputChange}
-                  className="material-select"
-                  required
-                >
-                  <option value="">Select need...</option>
-                  {categoricalOptions?.customer_need.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="material-input-wrapper">
-                <label className="material-label">
-                  Need Importance
-                </label>
-                <input
-                  type="number"
-                  name="customer_need_importance"
-                  value={formData.customer_need_importance}
-                  onChange={handleInputChange}
-                  step="0.1"
-                  min="0"
-                  max="10"
-                  className="material-input"
-                  required
-                />
-              </div>
-
-              <div className="material-input-wrapper">
-                <label className="material-label">
-                  Brand Importance
-                </label>
-                <input
-                  type="number"
-                  name="brand_importance"
-                  value={formData.brand_importance}
-                  onChange={handleInputChange}
-                  step="0.1"
-                  min="0"
-                  max="10"
-                  className="material-input"
-                  required
-                />
-              </div>
-
-              <div className="material-input-wrapper">
-                <label className="material-label">
-                  Price Per Pack (€)
-                </label>
-                <input
-                  type="number"
-                  name="price_per_pack"
-                  value={formData.price_per_pack}
-                  onChange={handleInputChange}
-                  step="0.01"
-                  min="0"
-                  className="material-input"
-                  required
-                />
-              </div>
-
-              <div className="material-input-wrapper">
-                <label className="material-label">
-                  Pack Size (g)
-                </label>
-                <input
-                  type="number"
-                  name="pack_size_g"
-                  value={formData.pack_size_g}
-                  onChange={handleInputChange}
-                  min="0"
-                  className="material-input"
-                  required
-                />
-              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Product Information</h3>
             </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-gray-700">
+                    Product Family
+                  </label>
+                  <select
+                    name="family"
+                    value={formData.family}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
+                    required
+                    style={{ position: 'relative', zIndex: 10 }}
+                  >
+                    <option value="">Select family...</option>
+                    {categoricalOptions.family && categoricalOptions.family.length > 0 ? (
+                      categoricalOptions.family.map((option) => (
+                        <option key={option} value={option}>
+                          {option.replace(/_/g, ' ')}
+                        </option>
+                      ))
+                    ) : (
+                      <option disabled>Loading...</option>
+                    )}
+                  </select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-gray-700">
+                    Sub-Family
+                  </label>
+                  <select
+                    name="sub_family"
+                    value={formData.sub_family}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
+                    required
+                    style={{ position: 'relative', zIndex: 10 }}
+                  >
+                    <option value="">Select sub-family...</option>
+                    {categoricalOptions.sub_family && categoricalOptions.sub_family.length > 0 ? (
+                      categoricalOptions.sub_family.map((option) => (
+                        <option key={option} value={option}>
+                          {option.replace(/_/g, ' ')}
+                        </option>
+                      ))
+                    ) : (
+                      <option disabled>Loading...</option>
+                    )}
+                  </select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-gray-700">
+                    Brand
+                  </label>
+                  <select
+                    name="brand"
+                    value={formData.brand}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
+                    required
+                    style={{ position: 'relative', zIndex: 10 }}
+                  >
+                    <option value="">Select brand...</option>
+                    {categoricalOptions.brand && categoricalOptions.brand.length > 0 ? (
+                      categoricalOptions.brand.map((option) => (
+                        <option key={option} value={option}>
+                          {option.replace(/_/g, ' ')}
+                        </option>
+                      ))
+                    ) : (
+                      <option disabled>Loading...</option>
+                    )}
+                  </select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-gray-700">
+                    Customer Need
+                  </label>
+                  <select
+                    name="customer_need"
+                    value={formData.customer_need}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
+                    required
+                    style={{ position: 'relative', zIndex: 10 }}
+                  >
+                    <option value="">Select need...</option>
+                    {categoricalOptions.customer_need && categoricalOptions.customer_need.length > 0 ? (
+                      categoricalOptions.customer_need.map((option) => (
+                        <option key={option} value={option}>
+                          {option.replace(/_/g, ' ')}
+                        </option>
+                      ))
+                    ) : (
+                      <option disabled>Loading...</option>
+                    )}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-gray-700">
+                    Price per Pack (€)
+                  </label>
+                  <input
+                    type="number"
+                    name="price_per_pack"
+                    value={formData.price_per_pack}
+                    onChange={handleInputChange}
+                    step="0.01"
+                    min="0"
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-gray-700">
+                    Pack Size (g)
+                  </label>
+                  <input
+                    type="number"
+                    name="pack_size_g"
+                    value={formData.pack_size_g}
+                    onChange={handleInputChange}
+                    min="0"
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-gray-700">
+                    Base Demand N-1
+                  </label>
+                  <input
+                    type="number"
+                    name="base_demand_N1_per_store"
+                    value={formData.base_demand_N1_per_store}
+                    onChange={handleInputChange}
+                    step="0.1"
+                    min="0"
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-gray-700">
+                    Need Importance (0-10)
+                  </label>
+                  <input
+                    type="number"
+                    name="customer_need_importance"
+                    value={formData.customer_need_importance}
+                    onChange={handleInputChange}
+                    step="0.1"
+                    min="0"
+                    max="10"
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-gray-700">
+                    Brand Importance (0-10)
+                  </label>
+                  <input
+                    type="number"
+                    name="brand_importance"
+                    value={formData.brand_importance}
+                    onChange={handleInputChange}
+                    step="0.1"
+                    min="0"
+                    max="10"
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+              </div>
           </div>
 
           {/* Store Information */}
-          <div className="space-y-5 bg-gradient-to-br from-red-50 to-white p-6 rounded-2xl border-3 border-red-200 shadow-material-4">
-            <h3 className="text-lg font-black text-gray-900 flex items-center space-x-3 pb-3 border-b-4 border-red-600">
-              <span className="w-9 h-9 bg-gradient-to-br from-red-600 to-red-800 text-white rounded-xl text-base flex items-center justify-center font-black shadow-material-4">
-                2
-              </span>
-              <span className="uppercase tracking-wide">Store Information</span>
-            </h3>
+          <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm" style={{ position: 'relative', overflow: 'visible' }}>
+            <div className="flex items-center space-x-3 mb-6 pb-3 border-b border-gray-200">
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <span className="text-white text-sm font-bold">2</span>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Store Information
+              </h3>
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="material-input-wrapper">
-                <label className="material-label">
+              {/* Region */}
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-gray-700">
                   Region
                 </label>
                 <select
                   name="region"
                   value={formData.region}
                   onChange={handleInputChange}
-                  className="material-select"
+                  className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
                   required
+                  style={{ position: 'relative', zIndex: 10 }}
                 >
                   <option value="">Select region...</option>
-                  {categoricalOptions?.region.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                  {categoricalOptions.region && categoricalOptions.region.length > 0 ? (
+                    categoricalOptions.region.map((option) => (
+                      <option key={option} value={option}>
+                        {option.replace(/_/g, ' ')}
+                      </option>
+                    ))
+                  ) : (
+                    <option disabled>Loading...</option>
+                  )}
+                  </select>
+                </div>
 
-              <div className="material-input-wrapper">
-                <label className="material-label">
+              {/* Store Size */}
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-gray-700">
                   Store Size
                 </label>
                 <select
                   name="store_size"
                   value={formData.store_size}
                   onChange={handleInputChange}
-                  className="material-select"
+                  className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
                   required
-                >
-                  <option value="S">Small (S)</option>
-                  <option value="M">Medium (M)</option>
-                  <option value="L">Large (L)</option>
-                  <option value="XL">Extra Large (XL)</option>
-                </select>
-              </div>
+                  style={{ position: 'relative', zIndex: 10 }}
+                  >
+                    <option value="S">Small (S)</option>
+                    <option value="M">Medium (M)</option>
+                    <option value="L">Large (L)</option>
+                    <option value="XL">Extra Large (XL)</option>
+                  </select>
+                </div>
 
-              <div className="material-input-wrapper">
-                <label className="material-label">
+              {/* Surface */}
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-gray-700">
                   Surface (m²)
                 </label>
                 <input
@@ -367,13 +529,14 @@ export default function PredictionForm() {
                   value={formData.surface_m2}
                   onChange={handleInputChange}
                   min="0"
-                  className="material-input"
-                  required
-                />
-              </div>
+                  className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
 
-              <div className="material-input-wrapper">
-                <label className="material-label">
+              {/* Store Size Factor */}
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-gray-700">
                   Store Size Factor
                 </label>
                 <input
@@ -383,14 +546,15 @@ export default function PredictionForm() {
                   onChange={handleInputChange}
                   step="0.01"
                   min="0"
-                  className="material-input"
-                  required
-                />
-              </div>
+                  className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
 
-              <div className="material-input-wrapper">
-                <label className="material-label">
-                  Assortment Coverage
+              {/* Assortment Coverage - Full Width */}
+              <div className="space-y-1.5 sm:col-span-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Assortment Coverage <span className="text-xs text-gray-500">(0.0 - 1.0)</span>
                 </label>
                 <input
                   type="number"
@@ -400,64 +564,55 @@ export default function PredictionForm() {
                   step="0.01"
                   min="0"
                   max="1"
-                  className="material-input"
-                  required
-                />
+                  className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
               </div>
-
-              <div className="material-input-wrapper">
-                <label className="material-label">
-                  Base Demand N-1
-                </label>
-                <input
-                  type="number"
-                  name="base_demand_N1_per_store"
-                  value={formData.base_demand_N1_per_store}
-                  onChange={handleInputChange}
-                  step="0.1"
-                  min="0"
-                  className="material-input"
-                  required
-                />
-              </div>
-            </div>
           </div>
 
           {/* Cold Start Toggle */}
-          <div className="flex items-center space-x-3 p-4 bg-gradient-to-r from-blue-50 to-red-50 rounded-lg border-2 border-dashed border-gray-300">
-            <input
-              type="checkbox"
-              name="cold_start"
-              id="cold_start"
-              checked={formData.cold_start}
-              onChange={handleInputChange}
-              className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
-            />
-            <label htmlFor="cold_start" className="flex-1">
-              <span className="text-sm font-bold text-gray-900 block">
-                🆕 Cold Start Product
-              </span>
-              <span className="text-xs text-gray-600">
-                Product with no historical sales data
-              </span>
-            </label>
+          <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-sm font-medium text-gray-900 block">
+                  Cold Start Product
+                </span>
+                <span className="text-xs text-gray-600">
+                  No historical sales data available
+                </span>
+              </div>
+              
+              <label htmlFor="cold_start" className="relative inline-block w-11 h-6 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="cold_start"
+                  id="cold_start"
+                  checked={formData.cold_start}
+                  onChange={handleInputChange}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-300 rounded-full transition-all peer-checked:bg-blue-600"></div>
+                <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow transition-all peer-checked:translate-x-5"></div>
+              </label>
+            </div>
           </div>
 
           {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className="material-button-primary w-full shadow-material-16"
+            className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
           >
             {loading ? (
               <>
-                <Loader2 className="w-6 h-6 animate-spin" />
-                <span className="text-lg">Generating Prediction...</span>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                <span>Generating Prediction...</span>
               </>
             ) : (
               <>
-                <Sparkles className="w-6 h-6" />
-                <span className="text-lg">🎯 Generate Prediction</span>
+                <Sparkles className="w-5 h-5" />
+                <span>Generate Prediction</span>
               </>
             )}
           </button>
