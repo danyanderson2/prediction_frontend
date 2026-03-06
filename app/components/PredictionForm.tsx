@@ -179,8 +179,8 @@ export default function PredictionForm() {
     sub_family: 'PATES',
     brand: 'BARILLA',
     customer_need: 'REPAS_RAPIDE',
-    customer_need_importance: 7.5,
-    brand_importance: 8.2,
+    customer_need_importance: 2,
+    brand_importance: 2,
     price_per_pack: 3.99,
     pack_size_g: 500,
     base_demand_N1_per_store: 15.3,
@@ -239,11 +239,23 @@ export default function PredictionForm() {
     setResult(null);
 
     try {
-      const response = await axios.post(`${API_URL}/predict`, formData);
+      const payload = {
+        ...formData,
+        customer_need_importance: Math.round(Number(formData.customer_need_importance)),
+        brand_importance: Math.round(Number(formData.brand_importance)),
+      };
+      const response = await axios.post(`${API_URL}/predict`, payload);
       setResult(response.data);
       toast.success('Prediction generated successfully!');
     } catch (error: any) {
-      toast.error(error.response?.data?.detail || 'Failed to get prediction');
+      const detail = error.response?.data?.detail;
+      let msg = 'Failed to get prediction';
+      if (typeof detail === 'string') {
+        msg = detail;
+      } else if (Array.isArray(detail)) {
+        msg = detail.map((d: any) => d.msg || JSON.stringify(d)).join('; ');
+      }
+      toast.error(msg);
       console.error('Prediction error:', error);
     } finally {
       setLoading(false);
@@ -416,36 +428,36 @@ export default function PredictionForm() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-gray-700">
-                    Need Importance (0-10)
+                    Need Importance (1-3)
                   </label>
-                  <input
-                    type="number"
+                  <select
                     name="customer_need_importance"
                     value={formData.customer_need_importance}
                     onChange={handleInputChange}
-                    step="0.1"
-                    min="0"
-                    max="10"
                     className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required
-                  />
+                  >
+                    <option value={1}>1 - Low</option>
+                    <option value={2}>2 - Medium</option>
+                    <option value={3}>3 - High</option>
+                  </select>
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-gray-700">
-                    Brand Importance (0-10)
+                    Brand Importance (1-3)
                   </label>
-                  <input
-                    type="number"
+                  <select
                     name="brand_importance"
                     value={formData.brand_importance}
                     onChange={handleInputChange}
-                    step="0.1"
-                    min="0"
-                    max="10"
                     className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required
-                  />
+                  >
+                    <option value={1}>1 - Low</option>
+                    <option value={2}>2 - Medium</option>
+                    <option value={3}>3 - High</option>
+                  </select>
                 </div>
               </div>
           </div>
