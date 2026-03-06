@@ -200,11 +200,17 @@ export default function PredictionForm() {
     const fetchCategoricalOptions = async () => {
       try {
         const response = await axios.get(`${API_URL}/categorical-options`);
-        setCategoricalOptions(response.data);
-        console.log('Loaded categorical options from API:', response.data);
+        const data = response.data;
+        // Only use API data if it actually has non-empty arrays
+        const hasData = data.family?.length > 0 && data.brand?.length > 0;
+        if (hasData) {
+          setCategoricalOptions(data);
+          console.log('Loaded categorical options from API');
+        } else {
+          console.log('API returned empty options, keeping fallback');
+        }
       } catch (error) {
         console.error('Failed to fetch categorical options:', error);
-        console.log('Using fallback categorical options');
         // Keep using fallback options
       }
     };
@@ -286,15 +292,11 @@ export default function PredictionForm() {
                     style={{ position: 'relative', zIndex: 10 }}
                   >
                     <option value="">Select family...</option>
-                    {categoricalOptions.family && categoricalOptions.family.length > 0 ? (
-                      categoricalOptions.family.map((option) => (
-                        <option key={option} value={option}>
-                          {option.replace(/_/g, ' ')}
-                        </option>
-                      ))
-                    ) : (
-                      <option disabled>Loading...</option>
-                    )}
+                    {categoricalOptions.family.map((option) => (
+                      <option key={option} value={option}>
+                        {option.replace(/_/g, ' ')}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -311,15 +313,11 @@ export default function PredictionForm() {
                     style={{ position: 'relative', zIndex: 10 }}
                   >
                     <option value="">Select sub-family...</option>
-                    {categoricalOptions.sub_family && categoricalOptions.sub_family.length > 0 ? (
-                      categoricalOptions.sub_family.map((option) => (
-                        <option key={option} value={option}>
-                          {option.replace(/_/g, ' ')}
-                        </option>
-                      ))
-                    ) : (
-                      <option disabled>Loading...</option>
-                    )}
+                    {categoricalOptions.sub_family.map((option) => (
+                      <option key={option} value={option}>
+                        {option.replace(/_/g, ' ')}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -336,15 +334,11 @@ export default function PredictionForm() {
                     style={{ position: 'relative', zIndex: 10 }}
                   >
                     <option value="">Select brand...</option>
-                    {categoricalOptions.brand && categoricalOptions.brand.length > 0 ? (
-                      categoricalOptions.brand.map((option) => (
-                        <option key={option} value={option}>
-                          {option.replace(/_/g, ' ')}
-                        </option>
-                      ))
-                    ) : (
-                      <option disabled>Loading...</option>
-                    )}
+                    {categoricalOptions.brand.map((option) => (
+                      <option key={option} value={option}>
+                        {option.replace(/_/g, ' ')}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -361,15 +355,11 @@ export default function PredictionForm() {
                     style={{ position: 'relative', zIndex: 10 }}
                   >
                     <option value="">Select need...</option>
-                    {categoricalOptions.customer_need && categoricalOptions.customer_need.length > 0 ? (
-                      categoricalOptions.customer_need.map((option) => (
-                        <option key={option} value={option}>
-                          {option.replace(/_/g, ' ')}
-                        </option>
-                      ))
-                    ) : (
-                      <option disabled>Loading...</option>
-                    )}
+                    {categoricalOptions.customer_need.map((option) => (
+                      <option key={option} value={option}>
+                        {option.replace(/_/g, ' ')}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -486,16 +476,12 @@ export default function PredictionForm() {
                   style={{ position: 'relative', zIndex: 10 }}
                 >
                   <option value="">Select region...</option>
-                  {categoricalOptions.region && categoricalOptions.region.length > 0 ? (
-                    categoricalOptions.region.map((option) => (
-                      <option key={option} value={option}>
-                        {option.replace(/_/g, ' ')}
-                      </option>
-                    ))
-                  ) : (
-                    <option disabled>Loading...</option>
-                  )}
-                  </select>
+                  {categoricalOptions.region.map((option) => (
+                    <option key={option} value={option}>
+                      {option.replace(/_/g, ' ')}
+                    </option>
+                  ))}
+                </select>
                 </div>
 
               {/* Store Size */}
