@@ -21,7 +21,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <Toaster position="top-right" />
       {/* Header */}
       <header className="bg-white shadow-material-16 border-b-8 border-blue-600">
@@ -66,7 +66,7 @@ export default function Home() {
                     border-b-4 transition-all duration-300 whitespace-nowrap
                     ${isActive
                       ? 'text-blue-700 border-blue-600 bg-gradient-to-t from-blue-50 to-transparent shadow-material-4 scale-105'
-                      : 'text-gray-600 border-transparent hover:text-blue-600 hover:bg-gray-50 hover:border-gray-400'
+                      : 'text-gray-600 border-transparent hover:text-blue-600 hover:bg-blue-50 hover:border-gray-400'
                     }
                   `}
                 >

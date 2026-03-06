@@ -130,7 +130,7 @@ export default function PredictionResult({ result }: PredictionResultProps) {
           <div>
             <p className="text-sm text-gray-600 mb-1 font-bold uppercase tracking-wide">Model Used</p>
             <p className="text-base font-bold text-gray-900 mb-3">{result.model_used}</p>
-            <div className="space-y-1 bg-gray-50 p-3 rounded-lg">
+            <div className="space-y-1 bg-blue-50 p-3 rounded-lg border border-blue-100">
               <p className="text-xs text-gray-600">
                 RMSE: <span className="font-bold text-gray-900">{result.model_rmse.toFixed(4)}</span>
               </p>

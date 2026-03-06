@@ -197,7 +197,7 @@ export default function ModelStats() {
               flex-1 flex items-center justify-center space-x-2 px-6 py-3.5 rounded-lg font-bold text-sm transition-all
               ${activeTab === 'stats'
                 ? 'bg-blue-600 text-white shadow-material-4'
-                : 'text-gray-600 hover:bg-gray-50'
+                : 'text-gray-600 hover:bg-blue-50'
               }
             `}
           >
@@ -210,7 +210,7 @@ export default function ModelStats() {
               flex-1 flex items-center justify-center space-x-2 px-6 py-3.5 rounded-lg font-bold text-sm transition-all
               ${activeTab === 'selection'
                 ? 'bg-blue-600 text-white shadow-material-4'
-                : 'text-gray-600 hover:bg-gray-50'
+                : 'text-gray-600 hover:bg-blue-50'
               }
             `}
           >
