@@ -21,29 +21,29 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
       <Toaster position="top-right" />
       {/* Header */}
-      <header className="bg-white shadow-material-16 border-b-8 border-blue-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div className="flex items-center space-x-5">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-900 rounded-2xl flex items-center justify-center shadow-material-16 transform -rotate-6 border-3 border-blue-400">
-                <TrendingUp className="w-9 h-9 text-white transform rotate-6" strokeWidth={3} />
+      <header className="bg-white shadow-md border-b-4 border-[#0099FF]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#0099FF] to-[#0066CC] rounded-xl flex items-center justify-center shadow-lg">
+                <TrendingUp className="w-7 h-7 text-white" strokeWidth={2.5} />
               </div>
               <div>
-                <h1 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight">
+                <h1 className="text-3xl font-bold text-[#2C2C2C]">
                   Sales Prediction Platform
                 </h1>
-                <p className="text-sm text-gray-600 mt-1 font-bold uppercase tracking-wide">
-                  AI-Powered Forecasting • Real-Time Analytics
+                <p className="text-sm text-[#666666] mt-1">
+                  AI-Powered Forecasting • Cold-Start Optimized
                 </p>
               </div>
             </div>
-            <div className="hidden md:flex items-center space-x-3 bg-gradient-to-r from-green-50 to-green-100 px-5 py-3 rounded-2xl border-3 border-green-400 shadow-material-8">
-              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-lg"></div>
-              <span className="text-sm font-black text-green-700 uppercase tracking-widest">
-                Live
+            <div className="hidden md:flex items-center space-x-2 bg-[#E6F5FF] px-4 py-2 rounded-full">
+              <div className="w-2 h-2 bg-[#0099FF] rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium text-[#0066CC]">
+                Model Active
               </span>
             </div>
           </div>
@@ -51,9 +51,9 @@ export default function Home() {
       </header>
 
       {/* Navigation Tabs */}
-      <nav className="bg-white shadow-material-8 border-b-4 border-gray-200">
+      <nav className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex space-x-2 overflow-x-auto">
+          <div className="flex space-x-1 overflow-x-auto">
             {navigation.map((item) => {
               const Icon = item.icon;
               const isActive = activeView === item.id;
@@ -62,16 +62,16 @@ export default function Home() {
                   key={item.id}
                   onClick={() => setActiveView(item.id)}
                   className={`
-                    flex items-center space-x-3 px-8 py-5 font-black text-base
-                    border-b-4 transition-all duration-300 whitespace-nowrap
+                    flex items-center space-x-2 px-6 py-4 font-medium text-sm
+                    border-b-3 transition-all duration-200
                     ${isActive
-                      ? 'text-blue-700 border-blue-600 bg-gradient-to-t from-blue-50 to-transparent shadow-material-4 scale-105'
-                      : 'text-gray-600 border-transparent hover:text-blue-600 hover:bg-blue-50 hover:border-gray-400'
+                      ? 'text-[#0099FF] border-[#0099FF] bg-[#E6F5FF]'
+                      : 'text-[#666666] border-transparent hover:text-[#0099FF] hover:bg-gray-50'
                     }
                   `}
                 >
-                  <Icon className="w-6 h-6" strokeWidth={2.5} />
-                  <span className="uppercase tracking-wide">{item.label}</span>
+                  <Icon className="w-4 h-4" />
+                  <span className="whitespace-nowrap">{item.label}</span>
                 </button>
               );
             })}
@@ -94,19 +94,19 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <h3 className="text-base font-medium text-gray-900 mb-3">
+              <h3 className="text-lg font-semibold text-[#2C2C2C] mb-3">
                 About the Platform
               </h3>
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-sm text-[#666666] leading-relaxed">
                 Advanced machine learning platform for retail sales forecasting,
                 optimized for cold-start products and new product launches.
               </p>
             </div>
             <div>
-              <h3 className="text-base font-medium text-gray-900 mb-3">
+              <h3 className="text-lg font-semibold text-[#2C2C2C] mb-3">
                 Key Features
               </h3>
-              <ul className="text-sm text-gray-600 space-y-2">
+              <ul className="text-sm text-[#666666] space-y-2">
                 <li>✓ Cold-start product prediction</li>
                 <li>✓ 95% confidence intervals</li>
                 <li>✓ Business recommendations</li>
@@ -115,10 +115,10 @@ export default function Home() {
               </ul>
             </div>
             <div>
-              <h3 className="text-base font-medium text-gray-900 mb-3">
+              <h3 className="text-lg font-semibold text-[#2C2C2C] mb-3">
                 Technical Info
               </h3>
-              <ul className="text-sm text-gray-600 space-y-2">
+              <ul className="text-sm text-[#666666] space-y-2">
                 <li>Model: Enhanced CatBoost</li>
                 <li>Test RMSE: 0.3247</li>
                 <li>Test R²: 0.9682</li>
@@ -128,7 +128,7 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-8 pt-8 border-t border-gray-200 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-[#666666]">
               © 2026 Sales Prediction Platform • Final Stretch Project
             </p>
           </div>

@@ -109,13 +109,13 @@ export default function BatchPrediction() {
   return (
     <div className="space-y-6">
       {/* Header Card */}
-      <div className="bg-white rounded-xl shadow-material-4 p-6 border-t-4 border-blue-600">
+      <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 border-t-4 border-t-[#0099FF]">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
-            <h2 className="text-xl font-bold text-gray-900 mb-1">
+            <h2 className="text-xl font-semibold text-[#2C2C2C] mb-1">
               📦 Batch Prediction
             </h2>
-            <p className="text-sm text-gray-600 font-medium">
+            <p className="text-sm text-[#666666]">
               Process multiple products simultaneously (max 100)
             </p>
           </div>
@@ -123,7 +123,7 @@ export default function BatchPrediction() {
             <button
               onClick={addProduct}
               disabled={products.length >= 100}
-              className="material-button-secondary"
+              className="inline-flex items-center space-x-2 px-4 py-2 text-sm font-medium text-[#E5001A] bg-white border border-[#E5001A] rounded-lg hover:bg-[#FFE6E9] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Plus className="w-4 h-4" />
               <span>Add Product</span>
@@ -131,7 +131,7 @@ export default function BatchPrediction() {
             <button
               onClick={handleBatchPredict}
               disabled={loading || products.length === 0}
-              className="material-button-primary"
+              className="inline-flex items-center space-x-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-[#0099FF] to-[#0066CC] rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
@@ -150,10 +150,10 @@ export default function BatchPrediction() {
       </div>
 
       {/* Products List */}
-      <div className="bg-white rounded-xl shadow-material-4 p-6 border-l-4 border-red-600">
-        <h3 className="text-base font-bold text-gray-900 mb-4 flex items-center justify-between">
+      <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 border-l-4 border-l-[#E5001A]">
+        <h3 className="font-semibold text-[#2C2C2C] mb-4 flex items-center justify-between">
           <span>📋 Products List</span>
-          <span className="text-sm font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">
+          <span className="text-sm font-medium text-[#0099FF] bg-[#E6F5FF] px-3 py-1 rounded-lg">
             {products.length} / 100
           </span>
         </h3>
@@ -161,9 +161,9 @@ export default function BatchPrediction() {
           {products.map((product, index) => (
             <div
               key={product.id}
-              className="flex items-center space-x-3 p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg border-2 border-gray-200 hover:border-blue-400 hover:shadow-material-2 transition-all"
+              className="flex items-center space-x-3 p-4 bg-[#E6F5FF] rounded-lg border border-[#0099FF]/20 hover:border-[#0099FF] transition-all"
             >
-              <div className="w-9 h-9 bg-blue-600 text-white rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0 shadow-material-2">
+              <div className="w-8 h-8 bg-[#0099FF] text-white rounded-lg flex items-center justify-center text-sm font-medium flex-shrink-0">
                 {index + 1}
               </div>
               <input
@@ -174,7 +174,7 @@ export default function BatchPrediction() {
                   newProducts[index].family = e.target.value;
                   setProducts(newProducts);
                 }}
-                className="flex-1 px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-200 font-medium"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#0099FF] focus:ring-2 focus:ring-[#0099FF]/20"
                 placeholder="Family"
               />
               <input
@@ -185,7 +185,7 @@ export default function BatchPrediction() {
                   newProducts[index].brand = e.target.value;
                   setProducts(newProducts);
                 }}
-                className="flex-1 px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-200 font-medium"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#0099FF] focus:ring-2 focus:ring-[#0099FF]/20"
                 placeholder="Brand"
               />
               <input
@@ -196,7 +196,7 @@ export default function BatchPrediction() {
                   newProducts[index].price_per_pack = parseFloat(e.target.value);
                   setProducts(newProducts);
                 }}
-                className="w-24 px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-200 font-medium"
+                className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#0099FF] focus:ring-2 focus:ring-[#0099FF]/20"
                 placeholder="Price"
               />
               <select
@@ -206,7 +206,7 @@ export default function BatchPrediction() {
                   newProducts[index].store_size = e.target.value;
                   setProducts(newProducts);
                 }}
-                className="w-20 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+                className="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#0099FF] focus:ring-2 focus:ring-[#0099FF]/20"
               >
                 <option value="S">S</option>
                 <option value="M">M</option>
@@ -215,7 +215,7 @@ export default function BatchPrediction() {
               </select>
               <button
                 onClick={() => removeProduct(product.id)}
-                className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+                className="p-2 text-[#E5001A] hover:bg-[#FFE6E9] rounded-lg transition-colors"
                 title="Remove product"
               >
                 <X className="w-5 h-5" />
@@ -227,19 +227,19 @@ export default function BatchPrediction() {
 
       {/* Results */}
       {result && (
-        <div className="bg-white rounded-xl shadow-material-4 p-6 border-t-4 border-green-600">
+        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 border-t-4 border-t-green-600">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-xl font-bold text-gray-900 mb-1">
+              <h3 className="text-xl font-semibold text-[#2C2C2C] mb-1">
                 🏆 Prediction Results
               </h3>
-              <p className="text-sm text-gray-600 font-medium">
+              <p className="text-sm text-[#666666]">
                 Analysis of {result.summary.total_products} products
               </p>
             </div>
             <button
               onClick={exportResults}
-              className="material-button-secondary"
+              className="inline-flex items-center space-x-2 px-4 py-2 text-sm font-medium text-[#E5001A] bg-white border border-[#E5001A] rounded-lg hover:bg-[#FFE6E9] transition-colors"
             >
               <FileDown className="w-4 h-4" />
               <span>Export JSON</span>
@@ -248,26 +248,26 @@ export default function BatchPrediction() {
 
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-5 text-white shadow-material-4 transform hover:scale-105 transition-transform">
-              <p className="text-sm opacity-90 mb-1 uppercase tracking-wide font-bold">📈 Total Sales</p>
-              <p className="text-4xl font-bold">
+            <div className="bg-gradient-to-br from-[#0099FF] to-[#0066CC] rounded-xl p-5 text-white shadow-lg">
+              <p className="text-sm opacity-90 mb-1">📈 Total Sales</p>
+              <p className="text-3xl font-bold">
                 {result.summary.total_predicted_sales.toFixed(0)}
               </p>
-              <p className="text-xs opacity-80 mt-1 font-medium">units/week</p>
+              <p className="text-xs opacity-80 mt-1">units/week</p>
             </div>
-            <div className="bg-gradient-to-br from-green-600 to-green-800 rounded-xl p-5 text-white shadow-material-4 transform hover:scale-105 transition-transform">
-              <p className="text-sm opacity-90 mb-1 uppercase tracking-wide font-bold">🎯 Average Sales</p>
-              <p className="text-4xl font-bold">
+            <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-xl p-5 text-white shadow-lg">
+              <p className="text-sm opacity-90 mb-1">🎯 Average Sales</p>
+              <p className="text-3xl font-bold">
                 {result.summary.average_predicted_sales.toFixed(2)}
               </p>
-              <p className="text-xs opacity-80 mt-1 font-medium">units/product/week</p>
+              <p className="text-xs opacity-80 mt-1">units/product/week</p>
             </div>
-            <div className="bg-gradient-to-br from-red-600 to-red-800 rounded-xl p-5 text-white shadow-material-4 transform hover:scale-105 transition-transform">
-              <p className="text-sm opacity-90 mb-1 uppercase tracking-wide font-bold">🆕 Cold-Start</p>
-              <p className="text-4xl font-bold">
+            <div className="bg-gradient-to-br from-[#E5001A] to-red-700 rounded-xl p-5 text-white shadow-lg">
+              <p className="text-sm opacity-90 mb-1">🆕 Cold-Start</p>
+              <p className="text-3xl font-bold">
                 {result.summary.cold_start_products}
               </p>
-              <p className="text-xs opacity-80 mt-1 font-medium">out of {result.summary.total_products}</p>
+              <p className="text-xs opacity-80 mt-1">out of {result.summary.total_products}</p>
             </div>
           </div>
 
@@ -276,24 +276,24 @@ export default function BatchPrediction() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b-2 border-gray-200">
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">#</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Family</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Brand</th>
-                  <th className="text-right py-3 px-4 font-medium text-gray-700">Prediction</th>
-                  <th className="text-right py-3 px-4 font-medium text-gray-700">Confidence</th>
-                  <th className="text-center py-3 px-4 font-medium text-gray-700">Status</th>
+                  <th className="text-left py-3 px-4 font-medium text-[#666666]">#</th>
+                  <th className="text-left py-3 px-4 font-medium text-[#666666]">Family</th>
+                  <th className="text-left py-3 px-4 font-medium text-[#666666]">Brand</th>
+                  <th className="text-right py-3 px-4 font-medium text-[#666666]">Prediction</th>
+                  <th className="text-right py-3 px-4 font-medium text-[#666666]">Confidence</th>
+                  <th className="text-center py-3 px-4 font-medium text-[#666666]">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {result.predictions.map((pred, index) => (
-                  <tr key={index} className="border-b border-gray-100 hover:bg-indigo-50 transition-colors">
-                    <td className="py-3 px-4 text-gray-600">{index + 1}</td>
-                    <td className="py-3 px-4 text-gray-900">{pred.input?.family || 'N/A'}</td>
-                    <td className="py-3 px-4 text-gray-900">{pred.input?.brand || 'N/A'}</td>
-                    <td className="py-3 px-4 text-right font-medium text-indigo-600">
+                  <tr key={index} className="border-b border-gray-100 hover:bg-[#E6F5FF] transition-colors">
+                    <td className="py-3 px-4 text-[#888888]">{index + 1}</td>
+                    <td className="py-3 px-4 text-[#2C2C2C]">{pred.input?.family || 'N/A'}</td>
+                    <td className="py-3 px-4 text-[#2C2C2C]">{pred.input?.brand || 'N/A'}</td>
+                    <td className="py-3 px-4 text-right font-medium text-[#0099FF]">
                       {pred.predicted_weekly_sales?.toFixed(2) || 'N/A'}
                     </td>
-                    <td className="py-3 px-4 text-right text-gray-700">
+                    <td className="py-3 px-4 text-right text-[#666666]">
                       {pred.confidence_score ? `${pred.confidence_score.toFixed(1)}%` : 'N/A'}
                     </td>
                     <td className="py-3 px-4 text-center">
