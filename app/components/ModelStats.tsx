@@ -15,7 +15,7 @@ import {
   Legend,
 } from 'recharts';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';  // set NEXT_PUBLIC_API_URL in production
 
 interface ModelStat {
   model_name: string;
