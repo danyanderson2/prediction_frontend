@@ -1,6 +1,5 @@
 'use client';
 
-
 import { useState } from 'react';
 import { TrendingUp, BarChart3, Settings, Info } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
