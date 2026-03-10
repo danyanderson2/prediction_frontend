@@ -2,6 +2,11 @@
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "framework": "nextjs",
+  "build": {
+    "env": {
+      "NEXT_PUBLIC_API_URL": "https://web-production-8c500.up.railway.app"
+    }
+  },
   "env": {
     "NEXT_PUBLIC_API_URL": "https://web-production-8c500.up.railway.app"
   },

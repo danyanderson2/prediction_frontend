@@ -244,7 +244,7 @@ export default function PredictionForm() {
         customer_need_importance: Math.round(Number(formData.customer_need_importance)),
         brand_importance: Math.round(Number(formData.brand_importance)),
       };
-      const response = await axios.post(`${API_URL}/predict`, payload);
+      const response = await axios.post(`${API_URL}/predict/`, payload);
       setResult(response.data);
       toast.success('Prediction generated successfully!');
     } catch (error: any) {
