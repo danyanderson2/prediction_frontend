@@ -8,7 +8,8 @@ export default function AboutSection() {
       icon: Brain,
       title: 'AI-Powered Forecasting',
       description:
-        'Advanced CatBoost machine learning model trained on retail sales data with 96.8% R² score.',
+        'Advanced CatBoost machine learning model (Cold-Start optimized) trained on retail sales data with 96.82% R² score and RMSE of 0.3247.',
+
       color: 'from-blue-600 to-blue-800',
       bgColor: 'bg-blue-50',
       iconColor: 'text-blue-600',
@@ -43,10 +44,10 @@ export default function AboutSection() {
   ];
 
   const metrics = [
-    { label: 'Test RMSE', value: '0.324', description: 'Root Mean Squared Error' },
-    { label: 'Test MAE', value: '0.190', description: 'Mean Absolute Error' },
-    { label: 'Test R²', value: '0.968', description: 'Variance Explained' },
-    { label: 'Features', value: '14', description: 'Cold-Start Ready' },
+    { label: 'Test RMSE', value: '0.3247', description: 'Root Mean Squared Error' },
+    { label: 'Test MAE', value: '0.1899', description: 'Mean Absolute Error' },
+    { label: 'Test R²', value: '0.9682', description: 'Variance Explained' },
+    { label: 'Features', value: '21', description: 'Optimized Cold-Start' },
   ];
 
   const capabilities = [
@@ -77,7 +78,10 @@ export default function AboutSection() {
               Machine Learning
             </span>
             <span className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg text-sm font-medium">
-              CatBoost
+              CatBoost · XGBoost
+            </span>
+            <span className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg text-sm font-medium">
+              Neural Networks
             </span>
             <span className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg text-sm font-medium">
               Cold-Start Optimized
@@ -166,7 +170,11 @@ export default function AboutSection() {
               </li>
               <li className="flex items-center space-x-2">
                 <span className="w-2 h-2 bg-[#0099FF] rounded-full"></span>
-                <span>CatBoost ML</span>
+                <span>CatBoost · XGBoost · sklearn</span>
+              </li>
+              <li className="flex items-center space-x-2">
+                <span className="w-2 h-2 bg-[#0099FF] rounded-full"></span>
+                <span>TensorFlow / Keras (DL)</span>
               </li>
               <li className="flex items-center space-x-2">
                 <span className="w-2 h-2 bg-[#0099FF] rounded-full"></span>

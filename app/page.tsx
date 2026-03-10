@@ -120,10 +120,10 @@ export default function Home() {
                 Technical Info
               </h3>
               <ul className="text-sm text-[#666666] space-y-2">
-                <li>Model: Enhanced CatBoost</li>
+                <li>Model: CatBoost Cold-Start</li>
                 <li>Test RMSE: 0.3247</li>
                 <li>Test R²: 0.9682</li>
-                <li>Features: 82</li>
+                <li>Features: 21</li>
                 <li>Version: 4.0</li>
               </ul>
             </div>

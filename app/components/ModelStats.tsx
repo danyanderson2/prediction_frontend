@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Award, Clock, TrendingUp, Loader2, RefreshCw, CheckCircle, Cpu } from 'lucide-react';
+import { Award, Clock, TrendingUp, Loader2, RefreshCw, CheckCircle, Cpu, Brain } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import {
@@ -35,6 +35,7 @@ interface StatsData {
 interface AvailableModels {
   catboost_models: string[];
   xgboost_models: string[];
+  deep_learning_models: string[];
   linear_models: {
     ridge: string[];
     lasso: string[];
@@ -45,6 +46,7 @@ interface AvailableModels {
     catboost: number;
     xgboost: number;
     linear: number;
+    deep_learning: number;
     all: number;
   };
 }
@@ -238,7 +240,7 @@ export default function ModelStats() {
           </div>
 
           {/* Model Count Summary */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div className="bg-white rounded-xl shadow-material-2 p-4 border-l-4 border-blue-600">
               <p className="text-sm text-gray-600 mb-1 font-bold uppercase tracking-wide">🚀 CatBoost Models</p>
               <p className="text-3xl font-bold text-blue-600">{availableModels.totals.catboost}</p>
@@ -250,6 +252,10 @@ export default function ModelStats() {
             <div className="bg-white rounded-xl shadow-material-2 p-4 border-l-4 border-green-600">
               <p className="text-sm text-gray-600 mb-1 font-bold uppercase tracking-wide">📊 Linear Models</p>
               <p className="text-3xl font-bold text-green-600">{availableModels.totals.linear}</p>
+            </div>
+            <div className="bg-white rounded-xl shadow-material-2 p-4 border-l-4 border-purple-600">
+              <p className="text-sm text-gray-600 mb-1 font-bold uppercase tracking-wide">🧠 Deep Learning</p>
+              <p className="text-3xl font-bold text-purple-600">{availableModels.totals.deep_learning}</p>
             </div>
             <div className="bg-white rounded-xl shadow-material-2 p-4 border-l-4 border-gray-700">
               <p className="text-sm text-gray-600 mb-1 font-bold uppercase tracking-wide">📦 Total Models</p>
@@ -345,6 +351,27 @@ export default function ModelStats() {
               </div>
             </div>
           </div>
+
+          {/* Deep Learning Models */}
+          {availableModels.deep_learning_models && availableModels.deep_learning_models.length > 0 && (
+            <div className="bg-white rounded-2xl shadow-material-4 p-6 border-2 border-gray-200 border-l-8 border-l-purple-600">
+              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <span className="w-4 h-4 bg-purple-600 rounded-full mr-3 shadow-material-2"></span>
+                🧠 Deep Learning Models ({availableModels.totals.deep_learning})
+              </h3>
+              <p className="text-xs text-gray-500 mb-4 font-medium">Neural Network models (Top-20 features variant) — requires TensorFlow in the backend environment.</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {availableModels.deep_learning_models.map((model) => (
+                  <ModelCard
+                    key={model}
+                    modelName={model}
+                    type="Neural Network"
+                    isCurrent={currentModel === model}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
