@@ -10,7 +10,9 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';  // 
 interface Product {
   id: string;
   family: string;
+  sub_family: string;
   brand: string;
+  customer_need: string;
   price_per_pack: number;
   store_size: string;
 }
@@ -33,7 +35,9 @@ export default function BatchPrediction() {
     {
       id: '1',
       family: 'PATES_RIZ_FECULENTS',
-      brand: 'Brand A',
+      sub_family: 'PATES',
+      brand: 'BARILLA',
+      customer_need: 'RAPIDITE',
       price_per_pack: 2.99,
       store_size: 'L',
     },
@@ -45,7 +49,9 @@ export default function BatchPrediction() {
       {
         id: Date.now().toString(),
         family: 'EPICERIE_SALEE',
+        sub_family: 'EPICERIE_SALEE',
         brand: '',
+        customer_need: 'RAPIDITE',
         price_per_pack: 3.99,
         store_size: 'M',
       },
@@ -66,15 +72,14 @@ export default function BatchPrediction() {
     try {
       const apiProducts = products.map((p) => ({
         family: p.family,
-        sub_family: 'DEFAULT',
+        sub_family: p.sub_family || p.family,
         brand: p.brand,
-        customer_need: 'General',
-        customer_need_importance: 7.5,
-        brand_importance: 7.5,
+        customer_need: p.customer_need || 'RAPIDITE',
+        customer_need_importance: 2,
+        brand_importance: 2,
         price_per_pack: p.price_per_pack,
         pack_size_g: 500,
-        base_demand_N1_per_store: 12.5,
-        region: 'AUVERGNE_RHONE_ALPES',
+        region: 'ILE_DE_FRANCE',
         store_size: p.store_size,
         surface_m2: 2500,
         store_size_factor: 1.25,
@@ -288,8 +293,8 @@ export default function BatchPrediction() {
                 {result.predictions.map((pred, index) => (
                   <tr key={index} className="border-b border-gray-100 hover:bg-[#E6F5FF] transition-colors">
                     <td className="py-3 px-4 text-[#888888]">{index + 1}</td>
-                    <td className="py-3 px-4 text-[#2C2C2C]">{pred.input?.family || 'N/A'}</td>
-                    <td className="py-3 px-4 text-[#2C2C2C]">{pred.input?.brand || 'N/A'}</td>
+                    <td className="py-3 px-4 text-[#2C2C2C]">{pred.family || pred.input?.family || 'N/A'}</td>
+                    <td className="py-3 px-4 text-[#2C2C2C]">{pred.brand || pred.input?.brand || 'N/A'}</td>
                     <td className="py-3 px-4 text-right font-medium text-[#0099FF]">
                       {pred.predicted_weekly_sales?.toFixed(2) || 'N/A'}
                     </td>

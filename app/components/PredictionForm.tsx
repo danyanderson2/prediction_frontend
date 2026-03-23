@@ -17,13 +17,21 @@ interface FormData {
   brand_importance: number;
   price_per_pack: number;
   pack_size_g: number;
-  base_demand_N1_per_store: number;
   region: string;
   store_size: 'S' | 'M' | 'L' | 'XL';
   surface_m2: number;
   store_size_factor: number;
   assortment_coverage: number;
   cold_start: boolean;
+}
+
+interface ReferenceBaseline {
+  family_avg: number;
+  subfamily_avg: number;
+  brand_avg: number;
+  region_avg: number;
+  storesize_avg: number;
+  combined_avg: number;
 }
 
 interface PredictionResponse {
@@ -36,14 +44,7 @@ interface PredictionResponse {
   model_r2: number;
   cold_start_detected: boolean;
   recommendations: string[];
-  baseline?: {
-    family_avg: number;
-    subfamily_avg: number;
-    brand_avg: number;
-    region_avg: number;
-    storesize_avg: number;
-    combined_avg: number;
-  };
+  reference_baseline?: ReferenceBaseline;
 }
 
 interface CategoricalOptions {
@@ -183,7 +184,6 @@ export default function PredictionForm() {
     brand_importance: 2,
     price_per_pack: 3.99,
     pack_size_g: 500,
-    base_demand_N1_per_store: 15.3,
     region: 'ILE_DE_FRANCE',
     store_size: 'L',
     surface_m2: 2500,
@@ -376,7 +376,7 @@ export default function PredictionForm() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-gray-700">
                     Price per Pack (€)
@@ -402,22 +402,6 @@ export default function PredictionForm() {
                     name="pack_size_g"
                     value={formData.pack_size_g}
                     onChange={handleInputChange}
-                    min="0"
-                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-gray-700">
-                    Base Demand N-1
-                  </label>
-                  <input
-                    type="number"
-                    name="base_demand_N1_per_store"
-                    value={formData.base_demand_N1_per_store}
-                    onChange={handleInputChange}
-                    step="0.1"
                     min="0"
                     className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required
@@ -569,31 +553,26 @@ export default function PredictionForm() {
               </div>
           </div>
 
-          {/* Cold Start Toggle */}
+          {/* Cold Start Checkbox */}
           <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-            <div className="flex items-center justify-between">
+            <label htmlFor="cold_start" className="flex items-center space-x-3 cursor-pointer">
+              <input
+                type="checkbox"
+                name="cold_start"
+                id="cold_start"
+                checked={formData.cold_start}
+                onChange={handleInputChange}
+                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
               <div>
                 <span className="text-sm font-medium text-gray-900 block">
                   Cold Start Product
                 </span>
                 <span className="text-xs text-gray-600">
-                  No historical sales data available
+                  No historical sales data available for this product
                 </span>
               </div>
-              
-              <label htmlFor="cold_start" className="relative inline-block w-11 h-6 cursor-pointer">
-                <input
-                  type="checkbox"
-                  name="cold_start"
-                  id="cold_start"
-                  checked={formData.cold_start}
-                  onChange={handleInputChange}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-gray-300 rounded-full transition-all peer-checked:bg-blue-600"></div>
-                <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow transition-all peer-checked:translate-x-5"></div>
-              </label>
-            </div>
+            </label>
           </div>
 
           {/* Submit Button */}
@@ -620,7 +599,7 @@ export default function PredictionForm() {
       {/* Results Section */}
       <div>
         {result ? (
-          <PredictionResult result={result} />
+          <PredictionResult result={result} inputData={{ family: formData.family, brand: formData.brand }} />
         ) : (
           <div className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl shadow-material-4 p-12 text-center h-full flex flex-col items-center justify-center border-2 border-dashed border-gray-300">
             <div className="w-24 h-24 bg-white rounded-2xl flex items-center justify-center mb-4 shadow-material-2">
