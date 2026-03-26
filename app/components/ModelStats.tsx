@@ -14,6 +14,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from 'recharts';
+import { useLanguage } from '../i18n/LanguageContext';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -121,7 +122,7 @@ function parseModelInfo(modelName: string): {
 }
 
 // ---------------------------------------------------------------------------
-// ModelCard
+// ModelCard — with state-based dialog popup
 // ---------------------------------------------------------------------------
 const ModelCard = ({
   modelName,
@@ -137,9 +138,14 @@ const ModelCard = ({
   stat?: ModelStat;
 }) => {
   const { featLabel, stratLabel, stratColor, tooltip } = parseModelInfo(modelName);
+  const [hovered, setHovered] = useState<boolean>(false);
 
   return (
-    <div className="relative group">
+    <div
+      className="relative"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       <button
         onClick={() => onSwitch(modelName)}
         disabled={switchingModel !== null}
@@ -184,11 +190,35 @@ const ModelCard = ({
         </div>
       </button>
 
-      {/* Tooltip */}
-      <div className="absolute bottom-full left-0 right-0 mb-1.5 z-20 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-        <div className="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 shadow-xl leading-relaxed">
-          <p className="font-mono text-gray-400 text-[10px] mb-1">{modelName}</p>
-          {tooltip}
+      {/* Dialog-style popup */}
+      <div
+        className={`
+          absolute bottom-full left-0 right-0 mb-3 z-20 pointer-events-none
+          transition-opacity duration-200
+          ${hovered ? 'opacity-100' : 'opacity-0'}
+        `}
+      >
+        <div className="bg-white border border-gray-200 rounded-xl shadow-2xl overflow-hidden">
+          {/* Dark header with model name */}
+          <div className="bg-gray-900 px-3 py-2">
+            <p className="font-mono text-[#0099FF] text-[10px] leading-tight truncate">{modelName}</p>
+          </div>
+          {/* Tooltip body */}
+          <div className="px-3 py-2.5">
+            <p className="text-gray-700 text-xs leading-relaxed">{tooltip}</p>
+          </div>
+        </div>
+        {/* Downward-pointing caret */}
+        <div className="flex justify-center">
+          <div
+            style={{
+              width: 0,
+              height: 0,
+              borderLeft: '7px solid transparent',
+              borderRight: '7px solid transparent',
+              borderTop: '7px solid #e5e7eb',
+            }}
+          />
         </div>
       </div>
     </div>
@@ -199,6 +229,7 @@ const ModelCard = ({
 // Main component
 // ---------------------------------------------------------------------------
 export default function ModelStats() {
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<StatsData | null>(null);
   const [availableModels, setAvailableModels] = useState<AvailableModels | null>(null);
@@ -247,10 +278,10 @@ export default function ModelStats() {
     try {
       await axios.post(`${API_URL}/models/select/${modelName}`);
       setCurrentModel(modelName);
-      toast.success(`Switched to ${modelName}`);
+      toast.success(t.stats.switchedTo(modelName));
       await fetchStats();
     } catch (error: unknown) {
-      toast.error(`Failed to switch to ${modelName}`);
+      toast.error(t.stats.failedSwitch(modelName));
       console.error(error);
     } finally {
       setSwitchingModel(null);
@@ -262,7 +293,7 @@ export default function ModelStats() {
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
           <Loader2 className="w-16 h-16 text-[#0099FF] animate-spin mx-auto mb-4" />
-          <p className="text-gray-600 font-medium">Loading model statistics...</p>
+          <p className="text-gray-600 font-medium">{t.stats.loadingStats}</p>
         </div>
       </div>
     );
@@ -322,7 +353,7 @@ export default function ModelStats() {
             `}
           >
             <Cpu className="w-5 h-5" />
-            <span>Model Selection</span>
+            <span>{t.stats.modelSelection}</span>
           </button>
           <button
             onClick={() => setActiveTab('stats')}
@@ -335,7 +366,7 @@ export default function ModelStats() {
             `}
           >
             <TrendingUp className="w-5 h-5" />
-            <span>Performance Statistics</span>
+            <span>{t.stats.performanceStats}</span>
           </button>
         </div>
       </div>
@@ -348,8 +379,8 @@ export default function ModelStats() {
             <div className="absolute top-0 right-0 w-48 h-48 bg-white opacity-5 rounded-full -mr-24 -mt-24" />
             <div className="relative z-10 flex items-center justify-between">
               <div>
-                <p className="text-sm opacity-80 mb-1 uppercase tracking-wider font-semibold">Currently Active Model</p>
-                <p className="text-xl font-bold">{currentModel ? `${parseModelInfo(currentModel).stratLabel} · ${parseModelInfo(currentModel).featLabel}` : 'Loading...'}</p>
+                <p className="text-sm opacity-80 mb-1 uppercase tracking-wider font-semibold">{t.stats.currentlyActive}</p>
+                <p className="text-xl font-bold">{currentModel ? `${parseModelInfo(currentModel).stratLabel} · ${parseModelInfo(currentModel).featLabel}` : t.stats.loading}</p>
                 {currentModel && (
                   <p className="text-xs opacity-60 mt-1 font-mono">{currentModel}</p>
                 )}
@@ -379,7 +410,7 @@ export default function ModelStats() {
           {/* CatBoost Models */}
           <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100 border-l-4 border-l-[#0099FF]">
             <h3 className="text-base font-bold text-gray-900 mb-4">
-              CatBoost Models ({availableModels.totals.catboost})
+              {t.stats.catboostModels} ({availableModels.totals.catboost})
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {availableModels.catboost_models.map((model) => (
@@ -392,7 +423,7 @@ export default function ModelStats() {
           {/* XGBoost Models */}
           <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100 border-l-4 border-l-[#E5001A]">
             <h3 className="text-base font-bold text-gray-900 mb-4">
-              XGBoost Models ({availableModels.totals.xgboost})
+              {t.stats.xgboostModels} ({availableModels.totals.xgboost})
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {availableModels.xgboost_models.map((model) => (
@@ -405,10 +436,10 @@ export default function ModelStats() {
           {/* Linear Models */}
           <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100 border-l-4 border-l-green-600">
             <h3 className="text-base font-bold text-gray-900 mb-4">
-              Linear Models ({availableModels.totals.linear})
+              {t.stats.linearModels} ({availableModels.totals.linear})
             </h3>
             <div className="mb-5">
-              <h4 className="text-xs font-bold text-gray-500 mb-3 uppercase tracking-widest">Ridge Regression</h4>
+              <h4 className="text-xs font-bold text-gray-500 mb-3 uppercase tracking-widest">{t.stats.ridge}</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {availableModels.linear_models.ridge.map((model) => (
                   <ModelCard key={model} modelName={model} isCurrent={currentModel === model}
@@ -417,7 +448,7 @@ export default function ModelStats() {
               </div>
             </div>
             <div className="mb-5">
-              <h4 className="text-xs font-bold text-gray-500 mb-3 uppercase tracking-widest">Lasso Regression</h4>
+              <h4 className="text-xs font-bold text-gray-500 mb-3 uppercase tracking-widest">{t.stats.lasso}</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {availableModels.linear_models.lasso.map((model) => (
                   <ModelCard key={model} modelName={model} isCurrent={currentModel === model}
@@ -426,7 +457,7 @@ export default function ModelStats() {
               </div>
             </div>
             <div>
-              <h4 className="text-xs font-bold text-gray-500 mb-3 uppercase tracking-widest">ElasticNet Regression</h4>
+              <h4 className="text-xs font-bold text-gray-500 mb-3 uppercase tracking-widest">{t.stats.elasticnet}</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {availableModels.linear_models.elasticnet.map((model) => (
                   <ModelCard key={model} modelName={model} isCurrent={currentModel === model}
@@ -440,7 +471,7 @@ export default function ModelStats() {
           {availableModels.deep_learning_models && availableModels.deep_learning_models.length > 0 && (
             <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100 border-l-4 border-l-purple-600">
               <h3 className="text-base font-bold text-gray-900 mb-1">
-                Deep Learning Models ({availableModels.totals.deep_learning})
+                {t.stats.deepLearningModels} ({availableModels.totals.deep_learning})
               </h3>
               <p className="text-xs text-gray-400 mb-4">Neural networks trained on SHAP top-20 features — compatible with the current inference pipeline.</p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -466,7 +497,7 @@ export default function ModelStats() {
                   <span className="text-2xl">1</span>
                 </div>
               </div>
-              <p className="text-xs opacity-75 mb-1 uppercase tracking-wide font-semibold">Best RMSE Model</p>
+              <p className="text-xs opacity-75 mb-1 uppercase tracking-wide font-semibold">{t.stats.bestRMSE}</p>
               <p className="text-sm font-bold leading-snug">{stats.best_rmse_model}</p>
             </div>
 
@@ -477,7 +508,7 @@ export default function ModelStats() {
                   <span className="text-2xl">R²</span>
                 </div>
               </div>
-              <p className="text-xs opacity-75 mb-1 uppercase tracking-wide font-semibold">Best R² Model</p>
+              <p className="text-xs opacity-75 mb-1 uppercase tracking-wide font-semibold">{t.stats.bestR2}</p>
               <p className="text-sm font-bold leading-snug">{stats.best_r2_model}</p>
             </div>
 
@@ -488,7 +519,7 @@ export default function ModelStats() {
                   <CheckCircle className="w-6 h-6" />
                 </div>
               </div>
-              <p className="text-xs opacity-75 mb-1 uppercase tracking-wide font-semibold">Currently Deployed</p>
+              <p className="text-xs opacity-75 mb-1 uppercase tracking-wide font-semibold">{t.stats.currentlyDeployed}</p>
               <p className="text-sm font-bold leading-snug">{stats.currently_deployed}</p>
             </div>
           </div>
@@ -496,7 +527,7 @@ export default function ModelStats() {
           {/* Error Chart: RMSE + MAE (same scale, both lower-is-better) */}
           <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
             <div className="mb-4">
-              <h3 className="text-base font-semibold text-gray-900">Prediction Error — Top 5 by RMSE</h3>
+              <h3 className="text-base font-semibold text-gray-900">{t.stats.predictionError}</h3>
               <p className="text-xs text-gray-500 mt-1">RMSE and MAE share the same unit (units/week). Lower bars = better model.</p>
             </div>
             <ResponsiveContainer width="100%" height={300}>
@@ -527,7 +558,7 @@ export default function ModelStats() {
           {/* R² Chart: separate — percentage of variance explained */}
           <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
             <div className="mb-4">
-              <h3 className="text-base font-semibold text-gray-900">R² Score — Variance Explained</h3>
+              <h3 className="text-base font-semibold text-gray-900">{t.stats.r2Score}</h3>
               <p className="text-xs text-gray-500 mt-1">Higher bars = more of the sales variance the model explains. 100% would be a perfect model.</p>
             </div>
             <ResponsiveContainer width="100%" height={260}>
@@ -599,7 +630,7 @@ export default function ModelStats() {
                             <span className="font-medium text-gray-900 text-sm">{model.model_name}</span>
                             {isDeployed && (
                               <span className="bg-[#0099FF] text-white px-2 py-0.5 rounded-full text-xs font-bold">
-                                Active
+                                {t.stats.active}
                               </span>
                             )}
                             {isBestRMSE && (
@@ -644,19 +675,19 @@ export default function ModelStats() {
           {/* Metrics Explanation */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-blue-50 rounded-xl p-5 border border-blue-200">
-              <h4 className="text-sm font-bold text-[#0066CC] mb-2">RMSE — Root Mean Squared Error</h4>
+              <h4 className="text-sm font-bold text-[#0066CC] mb-2">{t.stats.rmseLabel}</h4>
               <p className="text-xs text-gray-700 leading-relaxed">
                 Average prediction error in the same unit as the target (units/week). Lower is better. Penalises large errors more than small ones.
               </p>
             </div>
             <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-              <h4 className="text-sm font-bold text-green-700 mb-2">MAE — Mean Absolute Error</h4>
+              <h4 className="text-sm font-bold text-green-700 mb-2">{t.stats.maeLabel}</h4>
               <p className="text-xs text-gray-700 leading-relaxed">
                 Average absolute gap between predicted and actual values. Easier to interpret than RMSE; less sensitive to outliers.
               </p>
             </div>
             <div className="bg-red-50 rounded-xl p-5 border border-red-200">
-              <h4 className="text-sm font-bold text-[#E5001A] mb-2">R² — Coefficient of Determination</h4>
+              <h4 className="text-sm font-bold text-[#E5001A] mb-2">{t.stats.r2Label}</h4>
               <p className="text-xs text-gray-700 leading-relaxed">
                 Proportion of sales variance the model explains. 1.0 is perfect; 0.0 means the model is no better than predicting the mean.
               </p>

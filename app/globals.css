@@ -82,3 +82,23 @@ body {
 .animate-spin {
   animation: spin 1s linear infinite;
 }
+
+/* ── Print styles ─────────────────────────────────────────── */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+  }
+
+  header,
+  nav {
+    display: none !important;
+  }
+
+  footer {
+    display: none !important;
+  }
+}

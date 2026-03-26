@@ -5,6 +5,7 @@ import { Sparkles, Loader2, AlertCircle } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import PredictionResult from './PredictionResult';
+import { useLanguage } from '../i18n/LanguageContext';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';  // set NEXT_PUBLIC_API_URL in production
 
@@ -172,6 +173,7 @@ const FALLBACK_OPTIONS: CategoricalOptions = {
 };
 
 export default function PredictionForm() {
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<PredictionResponse | null>(null);
   const [categoricalOptions, setCategoricalOptions] = useState<CategoricalOptions>(FALLBACK_OPTIONS);
@@ -196,7 +198,7 @@ export default function PredictionForm() {
     console.log('PredictionForm mounted');
     console.log('Categorical options:', categoricalOptions);
     console.log('Family options count:', categoricalOptions.family.length);
-    
+
     const fetchCategoricalOptions = async () => {
       try {
         const response = await axios.get(`${API_URL}/categorical-options`);
@@ -246,7 +248,7 @@ export default function PredictionForm() {
       };
       const response = await axios.post(`${API_URL}/predict/`, payload);
       setResult(response.data);
-      toast.success('Prediction generated successfully!');
+      toast.success(t.form.successToast);
     } catch (error: any) {
       const detail = error.response?.data?.detail;
       let msg = 'Failed to get prediction';
@@ -272,10 +274,10 @@ export default function PredictionForm() {
           </div>
           <div>
             <h2 className="text-xl font-bold text-gray-900">
-              Product Information
+              {t.form.title}
             </h2>
             <p className="text-sm text-gray-600">
-              Configure prediction parameters
+              {t.form.subtitle}
             </p>
           </div>
         </div>
@@ -287,13 +289,13 @@ export default function PredictionForm() {
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                 <span className="text-white text-sm font-bold">1</span>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">Product Information</h3>
+              <h3 className="text-lg font-semibold text-gray-900">{t.form.step1}</h3>
             </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-gray-700">
-                    Product Family
+                    {t.form.productFamily}
                   </label>
                   <select
                     name="family"
@@ -314,7 +316,7 @@ export default function PredictionForm() {
 
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-gray-700">
-                    Sub-Family
+                    {t.form.subFamily}
                   </label>
                   <select
                     name="sub_family"
@@ -335,7 +337,7 @@ export default function PredictionForm() {
 
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-gray-700">
-                    Brand
+                    {t.form.brand}
                   </label>
                   <select
                     name="brand"
@@ -356,7 +358,7 @@ export default function PredictionForm() {
 
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-gray-700">
-                    Customer Need
+                    {t.form.customerNeed}
                   </label>
                   <select
                     name="customer_need"
@@ -379,7 +381,7 @@ export default function PredictionForm() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-gray-700">
-                    Price per Pack (€)
+                    {t.form.pricePerPack}
                   </label>
                   <input
                     type="number"
@@ -395,7 +397,7 @@ export default function PredictionForm() {
 
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-gray-700">
-                    Pack Size (g)
+                    {t.form.packSize}
                   </label>
                   <input
                     type="number"
@@ -412,7 +414,7 @@ export default function PredictionForm() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-gray-700">
-                    Need Importance (1-3)
+                    {t.form.needImportance}
                   </label>
                   <select
                     name="customer_need_importance"
@@ -421,15 +423,15 @@ export default function PredictionForm() {
                     className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required
                   >
-                    <option value={1}>1 - Low</option>
-                    <option value={2}>2 - Medium</option>
-                    <option value={3}>3 - High</option>
+                    <option value={1}>{t.form.low}</option>
+                    <option value={2}>{t.form.medium}</option>
+                    <option value={3}>{t.form.high}</option>
                   </select>
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-gray-700">
-                    Brand Importance (1-3)
+                    {t.form.brandImportance}
                   </label>
                   <select
                     name="brand_importance"
@@ -438,9 +440,9 @@ export default function PredictionForm() {
                     className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required
                   >
-                    <option value={1}>1 - Low</option>
-                    <option value={2}>2 - Medium</option>
-                    <option value={3}>3 - High</option>
+                    <option value={1}>{t.form.low}</option>
+                    <option value={2}>{t.form.medium}</option>
+                    <option value={3}>{t.form.high}</option>
                   </select>
                 </div>
               </div>
@@ -453,7 +455,7 @@ export default function PredictionForm() {
                 <span className="text-white text-sm font-bold">2</span>
               </div>
               <h3 className="text-lg font-semibold text-gray-900">
-                Store Information
+                {t.form.step2}
               </h3>
             </div>
 
@@ -461,7 +463,7 @@ export default function PredictionForm() {
               {/* Region */}
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">
-                  Region
+                  {t.form.region}
                 </label>
                 <select
                   name="region"
@@ -483,7 +485,7 @@ export default function PredictionForm() {
               {/* Store Size */}
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">
-                  Store Size
+                  {t.form.storeSize}
                 </label>
                 <select
                   name="store_size"
@@ -493,17 +495,17 @@ export default function PredictionForm() {
                   required
                   style={{ position: 'relative', zIndex: 10 }}
                   >
-                    <option value="S">Small (S)</option>
-                    <option value="M">Medium (M)</option>
-                    <option value="L">Large (L)</option>
-                    <option value="XL">Extra Large (XL)</option>
+                    <option value="S">{t.form.sizeS}</option>
+                    <option value="M">{t.form.sizeM}</option>
+                    <option value="L">{t.form.sizeL}</option>
+                    <option value="XL">{t.form.sizeXL}</option>
                   </select>
                 </div>
 
               {/* Surface */}
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">
-                  Surface (m²)
+                  {t.form.surface}
                 </label>
                 <input
                   type="number"
@@ -519,7 +521,7 @@ export default function PredictionForm() {
               {/* Store Size Factor */}
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">
-                  Store Size Factor
+                  {t.form.storeSizeFactor}
                 </label>
                 <input
                   type="number"
@@ -536,7 +538,7 @@ export default function PredictionForm() {
               {/* Assortment Coverage - Full Width */}
               <div className="space-y-1.5 sm:col-span-2">
                 <label className="text-sm font-medium text-gray-700">
-                  Assortment Coverage <span className="text-xs text-gray-500">(0.0 - 1.0)</span>
+                  {t.form.assortmentCoverage} <span className="text-xs text-gray-500">(0.0 - 1.0)</span>
                 </label>
                 <input
                   type="number"
@@ -566,10 +568,10 @@ export default function PredictionForm() {
               />
               <div>
                 <span className="text-sm font-medium text-gray-900 block">
-                  Cold Start Product
+                  {t.form.coldStart}
                 </span>
                 <span className="text-xs text-gray-600">
-                  No historical sales data available for this product
+                  {t.form.coldStartDesc}
                 </span>
               </div>
             </label>
@@ -584,12 +586,12 @@ export default function PredictionForm() {
             {loading ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                <span>Generating Prediction...</span>
+                <span>{t.form.generating}</span>
               </>
             ) : (
               <>
                 <Sparkles className="w-5 h-5" />
-                <span>Generate Prediction</span>
+                <span>{t.form.generate}</span>
               </>
             )}
           </button>
@@ -606,10 +608,10 @@ export default function PredictionForm() {
               <AlertCircle className="w-12 h-12 text-gray-400" />
             </div>
             <h3 className="text-lg font-bold text-gray-900 mb-2">
-              Awaiting Input
+              {t.form.awaitingTitle}
             </h3>
             <p className="text-sm text-gray-600 max-w-xs">
-              Complete the form and generate a prediction to view detailed results here
+              {t.form.awaitingDesc}
             </p>
           </div>
         )}
