@@ -7,6 +7,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
+import { useLanguage } from '../i18n/LanguageContext';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -15,25 +16,22 @@ interface Message {
   content: string;
 }
 
-const SUGGESTED = [
-  'Who worked on this project?',
-  'What is the cold-start problem?',
-  'Which model performs best?',
-  'What datasets were used?',
-  'How does confidence scoring work?',
-];
-
 export default function AboutChatbot() {
+  const { t } = useLanguage();
+  const ap = t.aboutPage;
+
   const [messages, setMessages] = useState<Message[]>([
-    {
-      role: 'assistant',
-      content:
-        'Ask me anything about this project — the models, the team, the methodology, or how to interpret results.',
-    },
+    { role: 'assistant', content: ap.chatGreeting },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Re-seed greeting when language changes
+  useEffect(() => {
+    setMessages([{ role: 'assistant', content: ap.chatGreeting }]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ap.chatGreeting]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -56,7 +54,7 @@ export default function AboutChatbot() {
     } catch {
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: "Sorry, I couldn't reach the AI service. Please try again." },
+        { role: 'assistant', content: ap.chatError },
       ]);
     } finally {
       setLoading(false);
@@ -71,8 +69,8 @@ export default function AboutChatbot() {
           <Sparkles className="w-5 h-5 text-white" />
         </div>
         <div>
-          <p className="text-white font-semibold">Ask about this project</p>
-          <p className="text-white/70 text-xs mt-0.5">AI assistant · powered by Gemini + Pinecone RAG</p>
+          <p className="text-white font-semibold">{ap.chatTitle}</p>
+          <p className="text-white/70 text-xs mt-0.5">{ap.chatSubtitle}</p>
         </div>
       </div>
 
@@ -141,7 +139,7 @@ export default function AboutChatbot() {
       {/* Suggested questions — only when conversation is fresh */}
       {messages.length === 1 && (
         <div className="px-4 pt-2 pb-1 bg-gray-50 flex flex-wrap gap-2 border-t border-gray-100">
-          {SUGGESTED.map((q) => (
+          {ap.chatSuggestions.map((q) => (
             <button
               key={q}
               onClick={() => send(q)}
@@ -161,7 +159,7 @@ export default function AboutChatbot() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && send()}
-            placeholder="Ask anything about the project…"
+            placeholder={ap.chatPlaceholder}
             className="flex-1 bg-transparent text-sm text-[#2C2C2C] placeholder-gray-400 outline-none"
           />
           <button
